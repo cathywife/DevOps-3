@@ -1,0 +1,22 @@
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'docker'
+Vagrant.configure('2') do |config|
+  config.vm.define "vertxreceiver" do |a|
+    a.vm.provider "docker" do |d|
+      d.image = "vertxdev"
+      d.name = "vertxreceiver"
+      d.remains_running = true
+      d.cmd = ["vertx", "run", "vertx-examples/src/raw/java/eventbus_pointtopoint/Receiver.java ", "-cluster"]
+      d.volumes = ["/home/show/docker/vertx:/usr/local/src"]
+    end
+  end
+  config.vm.define "vertxsender" do |a|
+    a.vm.provider "docker" do |d|
+      d.image = "vertxdev"
+      d.name = "vertxsender"
+      d.remains_running = true
+      d.cmd = ["vertx", "run", "vertx-examples/src/raw/java/eventbus_pointtopoint/Sender.java", "-cluster"]
+      d.volumes = ["/home/show/docker/vertx:/usr/local/src"]
+    end
+  end
+end
+
