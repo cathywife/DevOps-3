@@ -1,0 +1,30 @@
+---
+- hosts: dbservers
+  gather_facts: False
+  vars:
+    - username: jingqi
+    - longvar: |
+        this is a long 
+        string, only test
+        long repr!
+  vars_files:
+    - files/var_file.yml
+  vars_prompt:
+    - name: "addr"
+      prompt: "Please input your address:"
+      default: "chaoyang"
+      private: yes
+  tasks:
+    - name: display username
+      debug: msg="username is {{ username }}"
+    - name: display key
+      debug: msg="key is {{ key }}"
+    - name: display address
+      debug: msg="Your address is {{ addr }}"
+    - name: register variable
+      shell: hostname
+      register: info
+    - name: use register
+      debug: msg="register variable(info) is {{ info['stdout'] }}"
+    - name: display long var
+      debug: msg="{{ longvar }}"
