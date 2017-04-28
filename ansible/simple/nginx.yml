@@ -11,7 +11,7 @@
     - name: ensurce nginx is the latest version
       yum: name=nginx state=latest
     - name: write the nginx config file
-      template: src=~/playbook/nginx/nginx2.conf dest=/etc/nginx/nginx.conf validate='nginx -t -c %s'
+      template: src=../playbook/nginx/nginx2.conf dest=/etc/nginx/nginx.conf validate='nginx -t -c %s'
       notify:
         - restart nginx
     - name: ensure nginx is running
