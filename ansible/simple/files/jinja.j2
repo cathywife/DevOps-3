@@ -1,0 +1,18 @@
+===========
+groups info
+{{ groups }}
+===========
+==================dbservers groups info=========
+{% for host in groups['dbservers']%}
+
+= {{ hostvars[host]['inventory_hostname'] }} enp0s3 ip is
+{{ hostvars[host]['ansible_enp0s3']['ipv4']['address'] }}
+
++ {{ hostvars[host]['inventory_hostname'] }} groups is {{ group_names }}
+
+_ {{ hostvars[host]['inventory_hostname'] }} short is {{ inventory_hostname_short }}
+
+* {{ play_hosts }}
+
+@ {{ inventory_dir }}
+{% endfor %}
