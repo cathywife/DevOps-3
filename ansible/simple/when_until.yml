@@ -1,0 +1,13 @@
+---
+- hosts: dbservers
+  gather_facts: False
+  tasks:
+#    - name: restart redhat flavored systems
+#      command: touch /tmp/1.txt
+#      when: ansible_os_family == "RedHat" and ansible_memory_mb.real.total > 512
+    - name: test datetime is the given
+      shell: date +%Y%m%d
+      register: date
+      until: date.stdout == "20170330"
+      retries: 3
+      delay: 3
