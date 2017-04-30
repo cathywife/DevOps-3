@@ -28,3 +28,5 @@
       debug: msg="register variable(info) is {{ info['stdout'] }}"
     - name: display long var
       debug: msg="{{ longvar }}"
+    - name: test buildin variable
+      template: src=files/jinja.j2 dest=/tmp/cpis
