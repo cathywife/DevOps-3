@@ -1,0 +1,20 @@
+---
+- hosts: webservers
+  gather_facts: False
+  vars:
+#    contents: "{{ lookup('file', '/etc/sysconfig/network-scripts/ifcfg-enp0s8') }}"
+#    temp: "{{ lookup('template', './files/lookup.j2') }}"
+#    passwd: "{{ lookup('password', 'jingqi')}}"
+#    cmd: "{{ lookup('pipe', 'date +%s') }}"
+    rediskv: "{{ lookup('redis_kv', 'redis://192.168.99.110:6379,test1') }}"
+  tasks:
+#    - name: display network content [file]
+#      debug: msg="network content is {% for i in contents.split('\n') %}{{ i }} {% endfor %}"
+#    - name: display lookup content [template]
+#      debug: msg="template content is {% for i in temp.split('\n') %}{{ i }} {% endfor %}"
+#    - name: display encrypted password [password]
+#      debug: msg="{{ passwd }}"
+#    - name: display output from cmd [pipe]
+#      debug: msg="{{ cmd }}"
+    - name: display output from redis [redis_kv]
+      debug: msg="test1 is {{ rediskv }}"
