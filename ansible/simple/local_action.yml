@@ -1,0 +1,9 @@
+---
+- hosts: 127.0.0.1
+  gather_facts: False
+  tasks:
+    - name: display local ipaddr
+      local_action: command "/sbin/ifconfig"
+      register: ip
+    - name: display ip
+      debug: msg="{{ ip.stdout_lines }}"

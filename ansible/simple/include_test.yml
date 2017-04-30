@@ -1,0 +1,10 @@
+---
+- hosts: dbservers
+  gather_facts: False
+  vars:
+    - key: 4
+  tasks:
+    - name: debug host variable from hostfile [main]
+      debug: msg="The {{ inventory_hostname }} value is {{ key }}"
+    - include: include_test_subtask.yml
+- include: include_test_subplay.yml

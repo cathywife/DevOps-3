@@ -1,0 +1,2 @@
+- name: display some message
+  debug: msg="The new message"
