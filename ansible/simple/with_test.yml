@@ -1,0 +1,67 @@
+---
+- hosts: dbservers
+  gather_facts: False
+  vars:
+    - user:
+        shencan:
+          name: shencan
+          shell: bash
+        ruifengyun:
+          name: ruifengyun
+          shell: zsh
+  tasks:
+#    - name: display list items
+#      debug: msg="name ---> {{ item }}"
+#      with_items:
+#        - one
+#        - two
+#        - three
+
+#    - name: display list items[direct]
+#      debug: msg="name ---> {{ item }}"
+#      with_flattened:
+#        - ['one', 'two', 'three']
+
+#    - name: display dict items
+#      debug: msg="{{ item.key }} is {{ item.value }}"
+#      with_items:
+#        - {'key': 'jing', 'value': 23}
+#        - {'key': 'qi', 'value': 29}
+
+#    - name: display dict items[direct]
+#      debug: msg="name={{ item.key }} value={{ item.value.name }}
+#                 shell={{ item.value.shell }}"
+#      with_dict: "{{ user }}"
+
+    - name: display nested items
+      shell: "echo {{ item[0] }}*{{ item[1]}}|bc"
+      with_nested:
+        - [2, 3]
+        - [3, 5, 7]
+      register: res
+    - name: display register variable
+      debug: msg="{% for i in res.results %}{{ i.stdout }} {% endfor %}"
+
+#    - name: display file wanted
+#      debug: msg="name include yml is {{ item }}"
+#      with_fileglob:
+#        - '/home/master/windows_share/simple/*.yml'
+#      with_first_found:
+#        - 'nginx.yml'
+#        - 'var_file.yml'
+
+#    - name: random choice an item
+#      debug: msg="value is {{ item }}"
+#      with_random_choice:
+#        - 'one'
+#        - 'two'
+#        - 'three'
+
+#    - name: register variable
+#      shell: "{{ item }}"
+#      with_items:
+#        - hostname
+#        - uname
+#      register: result
+#    - name: display register variable
+#      debug: msg="{% for i in result.results %}{{ i.stdout }} {% endfor %}"
