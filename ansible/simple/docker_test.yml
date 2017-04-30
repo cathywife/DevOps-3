@@ -1,0 +1,41 @@
+---
+- hosts: simple
+  gather_facts: False
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: install iptables service
+      yum: name={{ item }} state=present
+      with_items:
+        - iptables-services
+    - name: install docker from aliyun
+      shell: curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh -
+    - name: install docker-py
+      pip: name=docker-py state=present
+    - name: stop and disable firewalld service
+      service: name=firewalld state=stopped enabled=no
+    - name: start and enable docker and iptables service
+      service: name={{ item }} state=started enabled=yes
+      with_items:
+        - iptables
+        - docker
+    - name: copy docker file
+      copy: src=/lib/systemd/system/docker.service dest=/etc/systemd/system/docker.service remote_src=True
+    - name: add docker mirror from aliyun
+      lineinfile: path=/etc/systemd/system/docker.service regexp="^ExecStart=" line="ExecStart=/usr/bin/dockerd --registry-mirror=https://fer7fge6.mirror.aliyuncs.com"
+      notify:
+        - restart daemon
+        - restart docker
+    - name: copy Dockerfiles to remote host
+      copy: src=./files dest=~
+    - name: build image
+      docker_image: path="~/files" name="ubuntu/myimage" tag="v1.0" state=present docker_api_version=1.28
+    - name: run container
+      docker: name=ansible image="ubuntu/myimage:v1.0" state=started expose=22,80 docker_api_version=1.28
+
+  handlers:
+    - name: restart daemon
+      command: systemctl daemon-reload
+    - name: restart docker
+      service: name=docker state=restarted
+
