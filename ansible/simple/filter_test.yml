@@ -1,0 +1,32 @@
+---
+- hosts: dbservers
+  gather_facts: False
+  vars:
+#    filename: /etc/profile
+    list: [1, 2, 3, 4, 5]
+    one: "1"
+    str: "string"
+  tasks:
+#    - name: use filter basename
+#      shell: echo {{ filename|basename }} >> /tmp/shell11
+#    - name: run command
+#      shell: df -h
+#      register: info
+#    - name: debug pprint filter
+#      debug: msg="{{ info.stdout|pprint }}"
+#    - name: debug conditionals filter
+#      debug: msg="The run commands status is changed"
+#      when: info|changed
+#    - name: debug int capitalize filter
+#      debug: msg="The int value {{ one|int }} the lower value is {{ str|capitalize }}"
+#    - name: debug default value filter
+#      debug: msg="The variable is {{ ansible|default('ansible is not defined')}}"
+#    - name: debug list max and min filter
+#      debug: msg="The list max value is {{ list|max }} the min is {{ list|min }}"
+#    - name: debug random filter
+#      debug: msg="the list random value is {{ list|random }} generate a random value {{1000|random(1, 10)}}"
+#    - name: debug join filter
+#      debug: msg="The join filter value is {{ list|join('+')}}"  
+    - name: debug replace and regex_replace filter
+      debug: msg="The replace value is {{ str|replace('t', 'T')}}, \
+            The regex_replace value is {{ str|regex_replace('.*str(.*)$', '\\1')}}"
