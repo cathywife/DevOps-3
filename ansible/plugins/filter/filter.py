@@ -3,9 +3,11 @@
 # rom ansible import errors
 import time
 
+# change str to list
 def string(str, seperator=' '):
     return str.split(seperator)
 
+# change datetime to timestamp
 def _time(times):
     return time.mktime(time.strptime(times, '%Y-%m-%d %H:%M:%S'))
 

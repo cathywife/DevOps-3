@@ -26,7 +26,7 @@ class LookupModule(LookupBase):
             conn = psycopg2.connect(database=db, user='postgres',
                 password='123456', host=host)
             cur = conn.cursor()
-            sql = "select value from %s where keyname = '%s'" % (table, key)
+            sql = "select date from %s where hosts = '%s'" % (table, key)
             cur.execute(sql)
             result = cur.fetchone()
             cur.close()

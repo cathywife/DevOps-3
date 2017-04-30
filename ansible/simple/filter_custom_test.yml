@@ -1,0 +1,6 @@
+---
+- hosts: 127.0.0.1
+  gather_facts: False
+  tasks:
+    - name: debug some info
+      debug: msg="{{ "jingqi"|sep('+') }} {{ "2017-05-01 01:37:49"|timep }}"

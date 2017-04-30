@@ -1,0 +1,9 @@
+---
+- hosts: 127.0.0.1
+  gather_facts: False
+  vars:
+    - result: "{{ lookup('lookup_from_psql', ('127.0.0.1', 'ansible', 'status', '192.168.99.111'))}}"
+  tasks:
+    - name: display some info
+      debug: msg="{{ result }}"
+
