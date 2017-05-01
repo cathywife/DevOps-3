@@ -1,0 +1,10 @@
+[dbservers]
+192.168.99.111
+[dbservers:vars]
+ansible_ssh_user="db"
+
+[webservers]
+192.168.99.110
+[webservers:vars]
+ansible_ssh_user="web"
+

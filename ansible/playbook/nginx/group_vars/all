@@ -1,0 +1,3 @@
+---
+# Variables listed here are appplicable to all host groups
+ntpserver: ntp.sjtu.edu.cn
