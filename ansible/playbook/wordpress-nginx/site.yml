@@ -1,0 +1,9 @@
+---
+- name: Install MySQL, WordPress, Nginx, and PHP-FPM
+  hosts: simple
+  roles:
+    - common
+    - mysql
+    - nginx
+    - php-fpm
+    - wordpress

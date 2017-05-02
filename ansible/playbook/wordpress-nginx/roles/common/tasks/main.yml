@@ -1,0 +1,14 @@
+---
+- name: Copy the nginx, epel, remi repository definition
+  copy: src={{ item }} dest=/etc/yum.repos.d/
+  with_items:
+    - nginx.repo
+    - epel.repo
+    - remi.repo
+- name: Create the GPG key for nginx, epel, remi
+  copy: src={{ item }} dest=/etc/pki/rpm-gpg
+  with_items:
+    - RPM-GPG-KEY-NGINX
+    - RPM-GPG-KEY-EPEL-7
+    - RPM-GPG-KEY-remi
+

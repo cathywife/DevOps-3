@@ -1,0 +1,2 @@
+[simple]
+00.00.00.00 ansible_ssh_user="user"
