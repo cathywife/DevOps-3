@@ -1,0 +1,10 @@
+---
+- hosts: cobbler
+  user: root
+  become: yes
+  become_method: sudo
+  tasks:
+    - include: roles/centos65/tasks/main.yml
+  handlers:
+    - include: roles/centos65/handlers/main.yml
+
