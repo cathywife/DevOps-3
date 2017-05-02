@@ -1,0 +1,12 @@
+---
+- hosts: cobbler
+  tasks:
+    - name: Create normal user
+      user: name=cobbler password="{{ '123456'|password_hash('sha512') }}" shell=/bin/bash
+    - name: add user to sudo file
+      lineinfile: "dest=/etc/sudoers state=present line='cobbler ALL=(ALL) NOPASSWD: ALL' validate='visudo -cf %s'"
+    - name: add user to sudo file 2
+      lineinfile: dest=/etc/sudoers state=present line="Defaults:cobbler !requiretty" validate="visudo -cf %s"
+    - name: copy ssh-key
+      authorized_key: user=cobbler key="{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_rsa.pub')}}" state=present
+
