@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  vars:
+    - nodes: { "ah-namenode": "10.150.20.61",
+               "ah-ansible": "10.150.20.60",
+               "ah-secondary-namenode": "10.150.20.62",
+               "ah-resourcemanager": "10.150.20.63",
+               "ah-datanode-01": "10.150.20.64",
+               "ah-datanode-02": "10.150.20.65",
+               "ah-datanode-03": "10.150.20.66",
+               "ah-datanode-04": "10.150.20.67"}
+    - memory: |
+                config.vm.provider "virtualbox" do |vb|
+                    vb.customize ["modifyvm", :id, "--memory", "2048"]
+                end
+              
+  tasks:
+    - name: make directory
+      shell: mkdir {{ item.key }} chdir=/home/vagrant/ansible
+      with_dict: "{{ nodes }}"
+    - name: add box
+      shell: vagrant box add {{ item.key }} ~/box/centos65-x86_64-20140116.box chdir=/home/vagrant/ansible/{{ item.key }}
+      with_dict: "{{ nodes }}"
+    - name: init box
+      shell: vagrant init {{ item.key }} chdir=/home/vagrant/ansible/{{ item.key }}
+      with_dict: "{{ nodes }}"
+    - name: change network
+      lineinfile: 'insertbefore="^end" line="config.vm.network :public_network, ip: \"{{ item.value }}\"" dest=/home/vagrant/ansible/{{ item.key }}/Vagrantfile'
+      with_dict: "{{ nodes }}"
+    - name: change memory
+      lineinfile: insertbefore='^end' line={{ memory }} dest=/home/vagrant/ansible/{{ item.key }}/Vagrantfile
+      with_dict: "{{ nodes }}"
+    - name: startup box
+      shell: vagrant up chdir=/home/vagrant/ansible/{{ item.key }}
+      with_dict: "{{ nodes }}"
+    - name: change route
+      shell: vagrant ssh -c "sudo route add default gw 10.150.20.1" && vagrant ssh -c "sudo route del default gw 10.0.2.2" chdir=/home/vagrant/ansible/{{ item.key }}
+      with_dict: "{{ nodes }}"
+ 
