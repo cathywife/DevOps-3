@@ -1,24 +1,26 @@
 ---
+# deploy etcd/flannel/docker in all nodes
 - hosts: all
   become: yes
   become_method: sudo
   roles:
     - common
-
+# deploy master service
 - hosts: master
   become: yes
   become_method: sudo
   roles:
     - master
-
+# deploy minion service
 - hosts: minion
   become: yes
   become_method: sudo
   roles:
     - minion
-
+# deploy kubedns and kube-dashboard
 - hosts: master
   become: yes
   become_method: sudo
   roles:
     - kubedns
+    - kube-dashboard

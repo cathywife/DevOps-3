@@ -1,0 +1,4 @@
+- name: copy deploy file
+  template: src=roles/kube-dashboard/templates/kubernetes-dashboard.yaml dest=~
+- name: deploy kube-dashboard
+  shell: kubectl create -f ~/kubernetes-dashboard.yaml
