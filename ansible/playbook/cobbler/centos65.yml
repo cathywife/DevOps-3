@@ -4,7 +4,7 @@
   become: yes
   become_method: sudo
   tasks:
-    - include: roles/centos65/tasks/main.yml
+    - include: roles/cobbler/tasks/centos65.yml
   handlers:
-    - include: roles/centos65/handlers/main.yml
+    - include: roles/cobbler/handlers/main.yml
 

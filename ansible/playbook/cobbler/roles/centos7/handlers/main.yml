@@ -1,6 +1,0 @@
-- name: Restart service xinetd
-  service: name=xinetd state=restarted
-- name: Sync cobbler
-  shell: cobbler sync
-- name: Restart service cobblerd
-  service: name=cobblerd state=restarted

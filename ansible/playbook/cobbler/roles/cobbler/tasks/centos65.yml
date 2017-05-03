@@ -1,57 +1,77 @@
 ---
 - name: Add epel repo
   get_url:
-    url: http://mirrors.aliyun.com/repo/epel-7.repo 
+    url: http://mirrors.aliyun.com/repo/epel-6.repo
     dest: /etc/yum.repos.d/epel.repo
+- name: Add Base repo
+  get_url:
+    url: http://mirrors.aliyun.com/repo/Centos-6.repo
+    dest: /etc/yum.repos.d/CentOS-Base.repo
 - name: Install Cobbler and libselinux-python
   yum: name={{ item }} state=installed
   with_items:
     - cobbler
     - cobbler-web
     - xinetd
+    - tftp-server
+    - syslinux
+    - rsync
     - pykickstart
-    - tftp
     - httpd
     - dhcp
+    - debmirror
+    - libselinux-python
     - bind
-- name: download debmirror
-  get_url: 
-    url: https://depots.global-sp.net/CentOS/7/x86_64/debmirror-2.16-4.el7.centos.noarch.rpm
-    dest: /root/debmirror-2.16-4.el7.centos.noarch.rpm
-- name: install debmirror
-  shell: yum install /root/debmirror-2.16-4.el7.centos.noarch.rpm -y
-- name: start and enalbed service
-  service: name={{ item }} state=started enabled=yes
-  with_items:
-    - httpd
-    - cobblerd
-    - xinetd
-    - rsyncd
-    - named
 - name: Disable selinux
   selinux: state=disabled
-- name: Disable firewalld
-  service: name=firewalld  state=stopped enabled=no
+- name: Enable and Start services
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - cobblerd
+    - xinetd
+    - httpd
+    - named
 - name: Enable tftp
   lineinfile: dest=/etc/xinetd.d/tftp regexp="disable" line="\tdisable\t\t= no"
   notify: Restart service xinetd
+  tags:
+    - services
+    - xinetd
+- name: Enable rsync
+  lineinfile: dest=/etc/xinetd.d/rsync regexp="disable" line="\tdisable\t\t= no"
+  notify: Restart service xinetd
+  tags:
+    - services
+    - xinetd
 - name: Cobbler config files
-  template: src=roles/centos7/templates/{{ item }} dest=/etc/cobbler/ owner=root group=root
+  template: src=roles/cobbler/templates/{{ item }} dest=/etc/cobbler/ owner=root group=root
   with_items:
     - dhcp.template
     - settings
+- name: restart cobblerd
+  service: name=cobblerd state=restarted
+- name: sync cobbler
+  shell: cobbler sync
+#  notify:
+#    - Restart service cobblerd
+#    - Sync cobbler
+- name: start dhcp services
+  service: name=dhcpd state=started enabled=yes
 - name: Cobbler kickstart file
   template: src=roles/cobbler/templates/{{ item }} dest=/var/lib/cobbler/kickstarts/ owner=root group=root
   with_items:
     - CentOS-6-x86_64.ks
     - CentOS-7-x86_64.ks
     - ubuntu14.seed
+  tags: templates
 - name: download loaders
   shell: cobbler get-loaders creates=/var/lib/cobbler/loaders/pxelinux.0
 - name: make cobbler support debian step 1
   lineinfile: dest=/etc/debmirror.conf regexp="^@dists" line="#@dists"
 - name: make cobbler support debian step 2
   lineinfile: dest=/etc/debmirror.conf regexp="^@arches" line="#@arches"
+#- name: copy iso to cobbler
+#  copy: src=/home/cobbler/ubuntu-14.04.1-server-amd64.iso dest=/opt
 - name: mount iso file
   mount: src=/home/cobbler/ubuntu-14.04-server-amd64.iso name=/mnt fstype=iso9660 state=mounted opts=loop
 - name: import iso and edit ks file
@@ -60,4 +80,7 @@
   service: name=cobblerd state=restarted
 - name: sync cobbler
   shell: cobbler sync
+#  notify:
+#    - Restart service cobblerd
+#    - Sync cobbler
 
