@@ -3,3 +3,4 @@
 [minion]
 192.168.99.110 ansible_ssh_user="web"
 192.168.99.111 ansible_ssh_user="db"
+192.168.99.112 ansible_ssh_user='cobbler'
