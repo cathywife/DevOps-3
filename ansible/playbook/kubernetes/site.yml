@@ -4,13 +4,21 @@
   become_method: sudo
   roles:
     - common
+
 - hosts: master
   become: yes
   become_method: sudo
   roles:
     - master
+
 - hosts: minion
   become: yes
   become_method: sudo
   roles:
     - minion
+
+- hosts: master
+  become: yes
+  become_method: sudo
+  roles:
+    - kubedns

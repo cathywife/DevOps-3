@@ -9,7 +9,7 @@
     - restart master service
 
 - name: add api token
-  shell: openssl genrsa -out /tmp/serviceaccount.key 2048
+  shell: openssl genrsa -out /tmp/serviceaccount.key 2048 creates=/tmp/serviceaccount.key
 - name: update apiserver
   lineinfile: path=/etc/kubernetes/apiserver regexp="^KUBE_API_ARGS" line="KUBE_API_ARGS=\"--service_account_key_file=/tmp/serviceaccount.key\""
 - name: update controller-manager
@@ -21,4 +21,3 @@
     - kube-apiserver
     - kube-scheduler
     - kube-controller-manager
-

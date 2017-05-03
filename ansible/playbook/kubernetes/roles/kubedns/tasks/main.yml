@@ -1,0 +1,19 @@
+- name: generate ip for cluster dns
+  shell: awk -F '[=/.]' '/^DOCKER_OPT_BIP/{print $3"."$4"."$5".254"}' /run/flannel/docker
+  register: cluster_ip
+- name: copy skydns-rc.yaml and skydns-svc.yaml
+  template: src=roles/kubedns/templates/{{ item }} dest=~
+  with_items:
+    - skydns-rc.yaml
+    - skydns-svc.yaml
+- name: create kube-dns rc and svc
+  shell: kubectl create -f ~/{{ item }}
+  with_items:
+    - skydns-rc.yaml
+    - skydns-svc.yaml
+- name: change some item in kubelet
+  lineinfile: path=/etc/kubernetes/kubelet regexp="^KUBELET_ARGS" line="KUBELET_ARGS=\"--cluster_dns={{ cluster_ip.stdout }} --cluster_domain=unforget.cn\""
+  notify:
+    - restart kubelet
+  delegate_to: "{{ item }}"
+  with_flattened: "{{ groups['minion']}}"
