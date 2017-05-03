@@ -1,0 +1,14 @@
+- name: install kubernetes-node
+  yum: name=kubernetes-node state=installed
+- name: config kubelet and common
+  template: src=roles/minion/templates/{{ item }} dest=/etc/kubernetes/
+  with_items:
+    - config
+    - kubelet
+  notify:
+    - restart minion service
+- name: start and enable minion service
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - kubelet
+    - kube-proxy

@@ -1,0 +1,6 @@
+- name: restart master service
+  service: name={{ item }} state=restarted
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager

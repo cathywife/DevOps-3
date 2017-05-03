@@ -1,0 +1,37 @@
+- name: delete default iptables 1
+  shell: iptables -X
+- name: delete default iptables 2
+  shell: iptables -F
+- name: delete default iptables 3
+  shell: iptables -Z
+
+- name: Disable selinux
+  selinux: state=disabled
+- name: Disable firewalld
+  service: name=firewalld  state=stopped enabled=no
+
+- name: Install etcd service
+  yum: name=etcd state=installed
+- name: copy etcd config file
+  template: src=roles/common/templates/etcd.conf.j2 dest=/etc/etcd/etcd.conf
+  notify:
+    - restart etcd service
+- name: start and enable etcd
+  service: name=etcd state=started enabled=yes
+
+- name: install flannel
+  yum: name=flannel state=installed
+- name: use etcd to design network
+  shell: etcdctl set /coreos.com/network/config '{"Network":"172.19.0.0/16"}'
+- name: config flannel step 1 
+  lineinfile: dest=/etc/sysconfig/flanneld regexp="^FLANNEL_ETCD_ENDPOINTS" line="FLANNEL_ETCD_ENDPOINTS=\"http://127.0.0.1:2379\""
+- name: config flannel step 2
+  lineinfile: dest=/etc/sysconfig/flanneld regexp="^FLANNEL_ETCD_PREFIX" line="FLANNEL_ETCD_PREFIX=\"/coreos.com/network\""
+- name: start and enable flannel
+  service: name=flanneld state=started enabled=yes
+
+- name: install docker
+  yum: name=docker state=installed
+- name: start and enable docker
+  service: name=docker state=started enabled=yes
+

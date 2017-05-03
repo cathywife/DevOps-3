@@ -1,0 +1,16 @@
+- name: install kubernetes-master
+  yum: name=kubernetes-master state=installed
+- name: config apiservers and common
+  template: src=roles/master/templates/{{ item }} dest=/etc/kubernetes/
+  with_items:
+    - apiserver
+    - config
+  notify:
+    - restart master service
+- name: start and enable master service
+  service: name={{ item }} state=started enabled=yes
+  with_items:
+    - kube-apiserver
+    - kube-scheduler
+    - kube-controller-manager
+

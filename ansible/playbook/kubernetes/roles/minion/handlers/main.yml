@@ -1,0 +1,5 @@
+- name: restart minion service
+  service: name={{ item }} state=restarted
+  with_items:
+    - kubelet
+    - kube-proxy
