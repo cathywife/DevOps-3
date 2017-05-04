@@ -1,0 +1,11 @@
+mysql_user_home: /home/cobbler
+mysql_user_name: cobbler
+mysql_user_password: 345678
+mysql_server_id: "3"
+mysql_replication_role: 'slave'
+mysql_replication_master: '192.168.99.110'
+mysql_replication_user:
+  name: rep
+  host: "%"
+  password: 123456
+  priv: "*.*:ALL"

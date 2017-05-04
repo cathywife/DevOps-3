@@ -1,0 +1,11 @@
+mysql_user_home: /home/web
+mysql_user_name: web
+mysql_user_password: 567890
+mysql_server_id: "1"
+mysql_replication_role: 'master'
+mysql_replication_master: '192.168.99.110'
+mysql_replication_user:
+  name: rep
+  host: "%"
+  password: 123456
+  priv: "*.*:ALL"

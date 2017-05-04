@@ -1,0 +1,30 @@
+---
+- hosts: 192.168.99.110
+  become: yes
+  pre_tasks:
+    - include: pre_tasks.yml
+  roles:
+    - { role: geerlingguy.mysql }
+
+- hosts: 192.168.99.111
+  become: yes
+  pre_tasks:
+    - include: pre_tasks.yml
+  roles:
+    - { role: geerlingguy.mysql }
+
+- hosts: 192.168.99.112
+  become: yes
+  pre_tasks:
+    - include: pre_tasks.yml
+  roles:
+    - { role: geerlingguy.mysql }
+
+- hosts: webservers
+  become: yes
+  roles:
+    - common
+    - nginx
+    - php-fpm
+    - wordpress
+  
