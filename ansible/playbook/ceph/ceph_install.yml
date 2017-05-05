@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: install ntp
+      yum: name={{ item }} state=present
+      with_items:
+        - ntp
+        - ntpdate
+        - ntp-doc
+    - name: start and enable ntp
+      service: name=ntpd state=started enabled=yes
+    - name: create osd directory
+      file: path=/home/share/osd1 state=directory owner={{ ansible_ssh_user }} group={{ ansible_ssh_user }}
+- hosts: node01
+  become: yes
+  tasks:
+    - name: add common repo
+      yum: name=epel-release state=present
+    - name: add ceph repo
+      copy: src=ceph.repo dest=/etc/yum.repos.d/
+    - name: install ceph-deploy
+      yum: name=ceph-deploy state=installed
+    - name: mkdir deploy directory
+      file: path=~/my-cluster state=directory
+    - name: init ceph(moni) step1
+      shell: ceph-deploy new {% for node in groups['mon-node'] %}{{ node }} {% endfor %}
+      args:
+        chdir: ~/my-cluster
+#    - name: deploy ceph
+#      shell: ceph-deploy install {% for node in groups['all'] %}{{ node }} {% endfor %}
+#      args:
+#        chdir: ~/my-cluster
+    - name: init ceph(moni) step2
+      shell: ceph-deply mon create-initial
+      args:
+        chdir: ~/my-cluster
+    - name: init osd process
+      shell: ceph-deploy osd prepare {% for node in groups['osd-node']%}{{ node}}:/home/share/osd1 {% endfor %}
+      args:
+        chdir: ~/my-cluster
+    - name: activate osd 
+      shell: ceph-deploy osd activate {% for node in groups['osd-node']%}{{ node}}:/home/share/osd1 {% endfor %}
+      args:
+        chdir: ~/my-cluster
+    - name: copy ceph config file and key file
+      shell: ceph-deploy admin {% for node in groups['all']%}{{ node }} {% endfor %}
+      args:
+        chdir: ~/my-cluster
+    - name: ensure permission for key file
+      file: path=/etc/ceph/ceph.client.admin.keyring mode="a+r"
+      delegate_to: "{{ host }}"
+      with_items:
+#        - node
+        - 127.0.0.1
+        - node2
+        - node3
+        - node4
+    - name: check health of cluster
+      shell: ceph health
+      args:
+        chdir: ~/my-cluster

@@ -1,0 +1,15 @@
+node01 ansible_ssh_user="master" 
+node02 ansible_ssh_user="web"
+node03 ansible_ssh_user="db"
+node04 ansible_ssh_user="cobbler"
+[admin-node]
+node01
+
+[mon-node]
+node02 ansible_ssh_user="web"
+node03 ansible_ssh_user="db"
+node04 ansible_ssh_user="cobbler"
+
+[osd-node:children]
+mon-node
+
