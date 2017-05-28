@@ -1,0 +1,15 @@
+---
+- hosts: testservers
+  gather_facts: False
+  vars:
+    - username: test
+    - passwd: mytest123
+  tasks:
+    - name: create new user test
+      user: name={{ username }} password={{ passwd|password_hash('sha512') }} shell=/bin/bash
+    - name: add user to sudo file step 1
+      lineinfile: "dest=/etc/sudoers state=present 
+        line='{{ username }} ALL=(ALL) NOPASSWD: ALL' validate='visudo -cf %s'"
+    - name: add user to sudo file step 2
+      lineinfile: dest=/etc/sudoers state=present line="Defaults:{{ username }} !requiretty"
+        validate='visudo -cf %s'

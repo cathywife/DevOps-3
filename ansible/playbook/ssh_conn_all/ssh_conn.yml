@@ -1,0 +1,25 @@
+---
+- hosts: testservers
+  gather_facts: False
+  tasks:
+    - name: generate ssh key
+      shell: ssh-keygen -t rsa -P "" -f ~/.ssh/id_rsa creates=~/.ssh/id_rsa
+    - name: get ssh key to local host
+      fetch: src=~/.ssh/id_rsa.pub dest=./tmp
+    - name: join all ssh key to authorized_keys file
+      local_action: script join_sshkey.py {{ item }} {{ ansible_ssh_user }}
+      run_once: true
+      with_flattened:
+        - "{{ groups['testservers'] }}"
+    - name: copy authorized_keys file to remote hosts
+      copy: src=authorized_keys dest=~/.ssh/ mode=0600
+    - name: change all hosts's ssh no check to connect remote
+      lineinfile: path=/etc/ssh/ssh_config line='\t\tStrictHostKeyChecking no'
+      become: yes
+    - name: delete temp file and directories
+      file: path=./{{ item }} state=absent
+      run_once: true
+      with_items:
+        - tmp
+        - authorized_keys
+      delegate_to: localhost
